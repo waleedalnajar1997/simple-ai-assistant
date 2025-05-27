@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Simple AI Assistant</title>
+</head>
+<body>
+  <h2>Ask the AI a Question</h2>
+  <input type="text" id="userInput" placeholder="Type your question here">
+  <button onclick="askAI()">Ask</button>
+  <p><strong>Response:</strong></p>
+  <div id="response"></div>
+
+  <script>
+    async function askAI() {
+      const userInput = document.getElementById("userInput").value;
+      const responseDiv = document.getElementById("response");
+      responseDiv.innerText = "Thinking...";
+
+      try {
+        const result = await fetch("https://api.openai.com/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer YOUR_API_KEY_HERE"
+          },
+          body: JSON.stringify({
+            model: "gpt-3.5-turbo",
+            messages: [{ role: "user", content: userInput }],
+            temperature: 0.7
+          })
+        });
+
+        const data = await result.json();
+        responseDiv.innerText = data.choices[0].message.content;
+      } catch (error) {
+        responseDiv.innerText = "Error: " + error.message;
+      }
+    }
+  </script>
+</body>
+</html>
